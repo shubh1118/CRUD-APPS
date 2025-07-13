@@ -1,0 +1,90 @@
+.card {
+  width: 300px;
+  height: auto;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.imageWrapper {
+  position: relative;
+  height: 250px;
+  width: 100%;
+}
+
+.imageWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  border-bottom: 1px solid #ccc;
+}
+
+.card:hover .imageWrapper img {
+  transform: scale(1.03);
+}
+
+/* Overlay Artist Info */
+.artistOverlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  padding: 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  font-family: "SF Pro Display", sans-serif;
+}
+
+.content {
+  padding: 1rem;
+  flex-grow: 1;
+  font-family: "SF Pro Text", sans-serif;
+}
+
+.content h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+  color: #1c1c1e;
+  font-weight: 600;
+}
+
+.content p {
+  margin: 0.4rem 0;
+  color: #3a3a3c;
+  font-size: 0.95rem;
+}
+
+.actions {
+  padding: 1rem;
+  margin-top: auto;
+}
+
+.viewButton {
+  display: block;
+  text-align: center;
+  background-color: #0a84ff;
+  color: white;
+  padding: 0.8rem 1.1rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  font-family: "SF Pro Text", sans-serif;
+  transition: background-color 0.3s ease;
+}
+
+.viewButton:hover {
+  background-color: #0066cc;
+}
