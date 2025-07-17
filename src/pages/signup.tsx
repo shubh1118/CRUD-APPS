@@ -1,4 +1,4 @@
-// src/pages/signup.tsx
+
 
 import * as React from "react";
 import {
@@ -127,7 +127,11 @@ export default function SignUp() {
             Sign up
           </Typography>
 
-          <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+          >
             <FormControl>
               <FormLabel htmlFor="name">Full Name</FormLabel>
               <TextField

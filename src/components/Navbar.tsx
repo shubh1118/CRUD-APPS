@@ -1,28 +1,35 @@
-// src/components/Navbar.tsx
-import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
-import NextLink from "next/link";
 
-const navPages = [
+import * as React from "react";
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Typography,
+  Menu,
+  Container,
+  Button,
+  MenuItem,
+  CircularProgress,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
+import toast from "react-hot-toast";
+import { useAuth } from "../utils/AuthContext";
+
+const allNavPages = [
   { name: "Home", path: "/" },
   { name: "Admin", path: "/admin" },
-  { name: "Sign Up", path: "/signup" },
-  { name: "Login", path: "/login" },
+  { name: "Sign Up", path: "/admin/signup" },
+  { name: "Login", path: "/admin/login" },
+  { name: "Logout", path: "/logout-action" },
 ];
 
 function Navbar() {
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
+  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+  const router = useRouter();
+  const { isAuthenticated, logout, loading } = useAuth();
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -32,13 +39,44 @@ function Navbar() {
     setAnchorElNav(null);
   };
 
+  const handleLogout = async () => {
+    handleCloseNavMenu();
+    try {
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Logout failed");
+      }
+
+      toast.success("Logged out successfully!");
+      logout();
+      router.push("/");
+    } catch (error: any) {
+      console.error("Logout error:", error);
+      toast.error(`Logout failed: ${error.message}`);
+    }
+  };
+
+  const navPages = React.useMemo(() => {
+    if (loading) return [];
+    if (isAuthenticated) {
+      return allNavPages.filter((page) =>
+        ["Home", "Admin", "Logout"].includes(page.name)
+      );
+    } else {
+      return allNavPages.filter((page) =>
+        ["Home", "Login", "Sign Up"].includes(page.name)
+      );
+    }
+  }, [isAuthenticated, loading]);
+
   return (
     <AppBar position="static" sx={{ backgroundColor: "black" }}>
-      {" "}
-      {/* YAHAN CHANGE KIYA HAI */}
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* Large screens: ART GALLERY text */}
           <Typography
             variant="h6"
             noWrap
@@ -50,62 +88,79 @@ function Navbar() {
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".1rem",
-              color: "white", // YAHAN COLOR WHITE KIYA HAI
+              color: "white",
               textDecoration: "none",
             }}
           >
             ART GALLERY
           </Typography>
 
-          {/* Small screens: Hamburger menu */}
+         
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
+              aria-label="menu"
               onClick={handleOpenNavMenu}
-              color="inherit" // IconButton color typically inherits from AppBar, which is now black, so text inside is white
+              color="inherit"
             >
-              <MenuIcon sx={{ color: "white" }} />{" "}
-              {/* YAHAN ICON KA COLOR WHITE KIYA HAI */}
+              <MenuIcon sx={{ color: "white" }} />
             </IconButton>
             <Menu
-              id="menu-appbar"
               anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: "block", md: "none" },
-              }}
+              sx={{ display: { xs: "block", md: "none" } }}
             >
-              {navPages.map((page) => (
-                <MenuItem key={page.name} onClick={handleCloseNavMenu}>
-                  <NextLink
-                    href={page.path}
-                    passHref
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    <Typography textAlign="center" sx={{ color: "black" }}>
-                      {page.name}
-                    </Typography>{" "}
-                    {/* MenuItem text color for contrast on white menu */}
-                  </NextLink>
+              {loading ? (
+                <MenuItem>
+                  <CircularProgress size={20} />
+                  <Typography sx={{ ml: 1, color: "black" }}>
+                    Loading...
+                  </Typography>
                 </MenuItem>
-              ))}
+              ) : (
+                navPages.map((page) => (
+                  <MenuItem
+                    key={page.name}
+                    onClick={
+                      page.name === "Logout" ? handleLogout : handleCloseNavMenu
+                    }
+                    sx={{
+                      "&:hover": {
+                        backgroundColor:
+                          page.name === "Login"
+                            ? "#28a745"
+                            : page.name === "Logout"
+                            ? "#dc3545"
+                            : "#333",
+                        color: "white",
+                      },
+                      borderRadius: "8px",
+                      transition: "all 0.3s ease",
+                    }}
+                  >
+                    {page.name === "Logout" ? (
+                      <Typography textAlign="center" sx={{ color: "black" }}>
+                        {page.name}
+                      </Typography>
+                    ) : (
+                      <NextLink
+                        href={page.path}
+                        passHref
+                        style={{ textDecoration: "none", color: "inherit" }}
+                      >
+                        <Typography textAlign="center" sx={{ color: "black" }}>
+                          {page.name}
+                        </Typography>
+                      </NextLink>
+                    )}
+                  </MenuItem>
+                ))
+              )}
             </Menu>
           </Box>
 
-          {/* Small screens: ART GALLERY text (for when hamburger is visible) */}
+          
           <Typography
             variant="h5"
             noWrap
@@ -118,36 +173,68 @@ function Navbar() {
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".1rem",
-              color: "white", // YAHAN COLOR WHITE KIYA HAI
+              color: "white",
               textDecoration: "none",
             }}
           >
             ART GALLERY
           </Typography>
 
-          {/* Large screens: Navigation Buttons */}
+         
           <Box
             sx={{
               flexGrow: 1,
               display: { xs: "none", md: "flex" },
               justifyContent: "flex-end",
+              gap: 2,
             }}
           >
-            {navPages.map((page) => (
-              <Button
-                key={page.name}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }} // YAHAN COLOR WHITE KIYA HAI
-                component={NextLink}
-                href={page.path}
-              >
-                {page.name}
+            {loading ? (
+              <Button sx={{ color: "white", textTransform: "none" }}>
+                <CircularProgress size={20} color="inherit" />
+                <Typography sx={{ ml: 1 }}>Loading...</Typography>
               </Button>
-            ))}
+            ) : (
+              navPages.map((page) => {
+                const style = {
+                  color: "white",
+                  textTransform: "none",
+                  borderRadius: "8px",
+                  px: 2,
+                  py: 1,
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    backgroundColor:
+                      page.name === "Login"
+                        ? "#28a745"
+                        : page.name === "Logout"
+                        ? "#dc3545"
+                        : "#333",
+                  },
+                };
+
+                return page.name === "Logout" ? (
+                  <Button key={page.name} onClick={handleLogout} sx={style}>
+                    {page.name}
+                  </Button>
+                ) : (
+                  <Button
+                    key={page.name}
+                    onClick={handleCloseNavMenu}
+                    component={NextLink}
+                    href={page.path}
+                    sx={style}
+                  >
+                    {page.name}
+                  </Button>
+                );
+              })
+            )}
           </Box>
         </Toolbar>
       </Container>
     </AppBar>
   );
 }
+
 export default Navbar;

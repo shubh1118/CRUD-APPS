@@ -1,15 +1,38 @@
-import type { NextConfig } from "next";
 
-// next.config.js
-module.exports = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true, 
+
   images: {
-    domains: ["source.unsplash.com"], // allow this domain for next/image
+  
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.corenexis.com',
+        port: '',
+        pathname: '/media/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'source.unsplash.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ibb.co',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https', 
+        hostname: 'ibb.co',
+        port: '',
+        pathname: '/**',
+      },
+    
+    ],
   },
 };
 
-const nextConfig: NextConfig = {
-  /* config options here */
-  reactStrictMode: true,
-};
-
-export default nextConfig;
+module.exports = nextConfig; 

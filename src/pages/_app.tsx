@@ -1,11 +1,16 @@
+
 import type { AppProps } from "next/app";
-import Navbar from "@/components/Navbar";
+import { Toaster } from "react-hot-toast";
+import "../styles/globals.css";
+import Navbar from "../components/Navbar";
+import { AuthProvider } from "../utils/AuthContext"; 
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <>
+    <AuthProvider> 
+      <Toaster position="top-right" reverseOrder={false} />
       <Navbar />
       <Component {...pageProps} />
-    </>
+    </AuthProvider>
   );
 }

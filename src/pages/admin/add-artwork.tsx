@@ -1,148 +1,352 @@
-// src/pages/admin/add-artwork.tsx
-import React, { useEffect, useState } from "react";
-import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import styles from "@/styles/addArtwork.module.css";
 
-// Artwork type
+import React, { useState } from "react";
+import Head from "next/head";
+import NextLink from "next/link"; 
+import { useRouter } from "next/router";
+import toast from 'react-hot-toast'; 
+
+
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  CircularProgress,
+  Paper,
+  Stack,
+  CssBaseline, 
+} from '@mui/material';
+
+
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import SaveIcon from '@mui/icons-material/Save';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'; 
+
+
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { format } from 'date-fns'; 
+
+
+import { GetServerSideProps } from 'next';
+import { admin } from '../../utils/firebaseAdmin'; 
+import { parseCookies, destroyCookie } from 'nookies'; 
+
+
 type Artwork = {
   id: string;
   title: string;
   artist_name: string;
-  painting_date: string;
+  painting_date: string; 
   image_url: string;
-  description: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
 };
+
+
+type ArtworkFormData = Omit<Artwork, "id" | "createdAt" | "updatedAt">;
+
+
+type FormErrors = {
+  title?: string;
+  artist_name?: string;
+  painting_date?: string;
+  image_url?: string;
+  description?: string;
+};
+
 
 export default function AddArtwork() {
   const router = useRouter();
-  const { id } = router.query;
-
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [formData, setFormData] = useState<Omit<Artwork, "id">>({
-    title: "",
-    artist_name: "",
-    painting_date: "",
-    image_url: "",
-    description: "",
+  const [formData, setFormData] = useState<ArtworkFormData>({
+    title: '',
+    artist_name: '',
+    painting_date: '',
+    image_url: '',
+    description: '',
   });
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [loading, setLoading] = useState<boolean>(false);
 
-  
-  const getStoredArtworks = (): Artwork[] => {
-    if (typeof window === "undefined") return [];
-    const stored = localStorage.getItem("artworks");
-    return stored ? JSON.parse(stored) : [];
-  };
-
-  useEffect(() => {
-    if (id) {
-      const artworks = getStoredArtworks();
-      const existing = artworks.find((art) => art.id === id);
-      if (existing) {
-        setFormData({
-          title: existing.title,
-          artist_name: existing.artist_name,
-          painting_date: existing.painting_date,
-          image_url: existing.image_url,
-          description: existing.description,
-        });
-        setIsEditMode(true);
-      } else {
-        alert("Artwork not found!");
-        router.push("/admin");
-      }
-    }
-  }, [id, router]);
-
+ 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+    
+    if (errors[name as keyof FormErrors]) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: undefined,
+      }));
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const artworks = getStoredArtworks();
 
-    if (isEditMode && id) {
-      const updatedArtworks = artworks.map((art) =>
-        art.id === id ? { ...art, ...formData, id: id as string } : art
-      );
-      localStorage.setItem("artworks", JSON.stringify(updatedArtworks));
-      alert("Artwork updated!");
-    } else {
-      const newId = `art${Date.now()}`;
-      const newArtwork: Artwork = { ...formData, id: newId };
-      artworks.push(newArtwork);
-      localStorage.setItem("artworks", JSON.stringify(artworks));
-      alert("New artwork added!");
+  const handleDateChange = (date: Date | null) => {
+    
+    const formattedDate = date ? format(date, 'yyyy-MM-dd') : '';
+    setFormData((prevData) => ({
+      ...prevData,
+      painting_date: formattedDate,
+    }));
+    
+    if (errors.painting_date) {
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            painting_date: undefined,
+        }));
+    }
+  };
+
+ 
+  const validate = (): boolean => {
+    const newErrors: FormErrors = {};
+    if (!formData.title.trim()) newErrors.title = 'Title is required';
+    if (!formData.artist_name.trim()) newErrors.artist_name = 'Artist name is required';
+
+   
+    if (!formData.painting_date.trim()) {
+      newErrors.painting_date = 'Painting date is required';
+    }
+   
+
+    if (!formData.image_url.trim()) newErrors.image_url = 'Image URL is required';
+    else if (!/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp|svg)$/i.test(formData.image_url)) {
+        newErrors.image_url = 'Invalid image URL format (must be .jpg, .png, .gif, .webp, or .svg)';
     }
 
-    router.push("/admin");
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; 
+  };
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) {
+      toast.error("Please correct the errors in the form.");
+      return;
+    }
+
+    setLoading(true); 
+    try {
+      const response = await fetch('/api/artworks', { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add artwork');
+      }
+
+      
+      toast.success('Artwork added successfully!');
+      router.push('/admin'); 
+    } catch (err: any) {
+      console.error('Error adding artwork:', err);
+      toast.error(`Error adding artwork: ${err.message}`);
+    } finally {
+      setLoading(false); 
+    }
   };
 
   return (
     <>
+      
+      <CssBaseline />
       <Head>
-        <title>{isEditMode ? "Edit Artwork" : "Add New Artwork"} - Admin</title>
-        <meta name="description" content="Add or Edit an artwork in the gallery" />
+        <title>Add New Artwork</title>
+        
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+          rel="stylesheet"
+        />
       </Head>
 
-      <div className={styles.container}>
-        <h1 className={styles.heading}>
-          {isEditMode ? "Edit Artwork" : "Add New Artwork"}
-        </h1>
+      <Container
+        maxWidth="sm" 
+        sx={{
+          mt: 8, 
+          mb: 6, 
+          fontFamily: "Inter, sans-serif", 
+          backgroundColor: "#F5F5F7", 
+          borderRadius: 2, 
+          py: 4 
+        }}
+      >
+     
+        <Box display="flex" alignItems="center" mb={3}>
+          <AddCircleOutlineIcon color="primary" sx={{ mr: 1, fontSize: 26 }} />
+          <Typography variant="h5" fontWeight={600}>
+            Add New Artwork
+          </Typography>
+        </Box>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="title"
-            placeholder="Artwork Title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="text"
-            name="artist_name"
-            placeholder="Artist Name"
-            value={formData.artist_name}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="text"
-            name="painting_date"
-            placeholder="Painting Date (e.g. Jan 2024)"
-            value={formData.painting_date}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="url"
-            name="image_url"
-            placeholder="Image URL"
-            value={formData.image_url}
-            onChange={handleChange}
-            required
-          />
-          <textarea
-            name="description"
-            placeholder="Artwork Description"
-            value={formData.description}
-            onChange={handleChange}
-            rows={4}
-          />
+      
+        <Paper
+          elevation={3} 
+          sx={{
+            p: { xs: 2, md: 3 }, 
+            borderRadius: 4,
+            backgroundColor: "#fff", 
+            boxShadow: "0 8px 24px rgba(0,0,0,0.06)", 
+          }}
+        >
+          <form onSubmit={handleSubmit}>
+            <Stack spacing={3}> 
+              <TextField
+                label="Title"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                fullWidth
+                required
+                error={!!errors.title}
+                helperText={errors.title}
+              />
+              <TextField
+                label="Artist Name"
+                name="artist_name"
+                value={formData.artist_name}
+                onChange={handleChange}
+                fullWidth
+                required
+                error={!!errors.artist_name}
+                helperText={errors.artist_name}
+              />
 
-          <button type="submit">
-            {isEditMode ? "Update Artwork" : "Add Artwork"}
-          </button>
-        </form>
+              
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label="Painting Date"
+                  
+                  value={formData.painting_date ? new Date(formData.painting_date) : null}
+                  onChange={handleDateChange} 
+                  
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      fullWidth
+                      required
+                      error={!!errors.painting_date}
+                      helperText={errors.painting_date}
+                      
+                    
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+            
 
-        <Link href="/admin" className={styles.backLink}>
-          ← Back to Dashboard
-        </Link>
-      </div>
+              <TextField
+                label="Image URL"
+                name="image_url"
+                value={formData.image_url}
+                onChange={handleChange}
+                fullWidth
+                required
+                error={!!errors.image_url}
+                helperText={errors.image_url}
+              />
+              <TextField
+                label="Description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                fullWidth
+                multiline
+                rows={3} 
+     
+              />
+
+              
+              <Stack
+                direction="row"
+                spacing={2}
+                justifyContent="flex-end" 
+                sx={{ pt: 1 }} 
+              >
+                <NextLink href="/admin" passHref legacyBehavior>
+                  <Button
+                    variant="outlined"
+                    startIcon={<ArrowBackIcon />}
+                    sx={{
+                      textTransform: "none", 
+                      borderRadius: "8px",
+                      fontWeight: 500,
+                      "&:hover": {
+                        backgroundColor: "#e0e0e0", 
+                      },
+                    }}
+                  >
+                    Back
+                  </Button>
+                </NextLink>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={loading} 
+                  startIcon={
+                    loading ? (
+                      <CircularProgress size={20} color="inherit" /> 
+                    ) : (
+                      <SaveIcon /> 
+                    )
+                  }
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: 600,
+                    borderRadius: "8px",
+                    
+                    "&:hover": {
+                      backgroundColor: "#FFCC00", 
+                      color: "#000", 
+                    },
+                  }}
+                >
+                  {loading ? "Saving..." : "Add Artwork"}
+                </Button>
+              </Stack>
+            </Stack>
+          </form>
+        </Paper>
+      </Container>
     </>
   );
 }
+
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  try {
+    const cookies = parseCookies(context);
+    const token = cookies.__session; 
+
+    if (!token) {
+      console.log('Add Artwork: No Firebase ID token found, redirecting to login.');
+      return {
+        redirect: { destination: "/admin/login", permanent: false },
+      };
+    }
+
+   
+    await admin.auth().verifyIdToken(token);
+   
+    return { props: {} };
+  } catch (error: any) {
+    console.error('Authentication error on add artwork page (Firebase ID token verification failed):', error);
+   
+    destroyCookie(context, "__session", { path: "/" });
+    return {
+      redirect: { destination: "/admin/login", permanent: false },
+    };
+  }
+};

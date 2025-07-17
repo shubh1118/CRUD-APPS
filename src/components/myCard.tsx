@@ -1,7 +1,13 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import styles from "@/styles/myCard.module.css";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Box,
+} from "@mui/material";
 
 type ArtworkProps = {
   id: string;
@@ -11,7 +17,7 @@ type ArtworkProps = {
   painting_date: string;
 };
 
-const myCard: React.FC<ArtworkProps> = ({
+const MyMuiCard: React.FC<ArtworkProps> = ({
   id,
   image_url,
   title,
@@ -19,27 +25,66 @@ const myCard: React.FC<ArtworkProps> = ({
   painting_date,
 }) => {
   return (
-    <div className={styles.card}>
-      <div className={styles.imageWrapper}>
+    <Card
+      sx={{
+        width: 300,
+        borderRadius: "12px",
+        overflow: "hidden",
+        backgroundColor: "#fff",
+        boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        fontFamily: "Inter, sans-serif",
+      }}
+    >
+     
+      <Box sx={{ position: "relative", height: 180 }}>
         <Image
           src={image_url}
           alt={title}
           fill
-          style={{ objectFit: "cover", borderTopLeftRadius: "8px", borderTopRightRadius: "8px" }}
+          style={{ objectFit: "cover" }}
         />
-      </div>
-      <div className={styles.content}>
-        <h3>{title}</h3>
-        <p>Artist: {artist_name}</p>
-        <p>Painted: {painting_date}</p>
-      </div>
-      <div className={styles.actions}>
-        <Link href={`/art/${id}`} className={styles.viewButton}>
-          View Details
+      </Box>
+
+     
+      <CardContent sx={{ px: 2, pt: 2 }}>
+        <Typography variant="h6" fontWeight={600} color="#1D1D1F">
+          {title}
+        </Typography>
+        <Typography variant="body2" color="#6e6e73">
+          Artist: {artist_name}
+        </Typography>
+        <Typography variant="body2" color="#6e6e73">
+          Painted: {painting_date}
+        </Typography>
+      </CardContent>
+
+    
+      <Box sx={{ textAlign: "center", pb: 2, pt: 1 }}>
+        <Link href={`/art/${id}`} passHref legacyBehavior>
+          <Button
+            variant="outlined"
+            sx={{
+              textTransform: "none",
+              fontSize: "0.875rem", 
+              px: 3,
+              py: 1,
+              borderRadius: "8px",
+              fontWeight: 500,
+              "&:hover": {
+                backgroundColor: "#FFCC00",
+                color: "#000",
+              },
+            }}
+          >
+            View Details
+          </Button>
         </Link>
-      </div>
-    </div>
+      </Box>
+    </Card>
   );
 };
 
-export default myCard;
+export default MyMuiCard;

@@ -1,0 +1,21 @@
+[debug] [2025-07-16T18:06:23.696Z] ----------------------------------------------------------------------
+[debug] [2025-07-16T18:06:23.702Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Deepak\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2025-07-16T18:06:23.703Z] CLI Version:   14.10.1
+[debug] [2025-07-16T18:06:23.703Z] Platform:      win32
+[debug] [2025-07-16T18:06:23.704Z] Node Version:  v22.14.0
+[debug] [2025-07-16T18:06:23.705Z] Time:          Wed Jul 16 2025 23:36:23 GMT+0530 (India Standard Time)
+[debug] [2025-07-16T18:06:23.705Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-07-16T18:06:23.751Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-07-16T18:06:23.753Z] > authorizing via signed-in user (shubham65@sophize.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\Deepak\Desktop\NEXT JS\my-art-gallery
+
