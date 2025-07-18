@@ -1,14 +1,11 @@
-
 import React, { useState } from "react";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import toast from 'react-hot-toast';
 
-
 import { createUserWithEmailAndPassword, FirebaseError } from "firebase/auth";
-import { auth } from "../../utils/firebase"; 
-
+import { auth } from "../../utils/firebase";
 
 import {
   Container,
@@ -39,18 +36,13 @@ export default function SignupPage() {
     }
 
     try {
-     
       await createUserWithEmailAndPassword(auth, email, password);
-
-     
       toast.success("Account created successfully! You are now logged in.");
-      router.push("/admin"); 
-
+      router.push("/admin");
     } catch (error: any) {
       console.error("Signup error:", error);
       let errorMessage = "Failed to create account.";
 
-    
       if (error instanceof FirebaseError) {
         switch (error.code) {
           case 'auth/email-already-in-use':
@@ -79,10 +71,31 @@ export default function SignupPage() {
         <meta name="description" content="Admin signup page for the art gallery" />
       </Head>
       <Container maxWidth="xs" sx={{ mt: 8 }}>
-        <Paper elevation={3} sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
+        <Paper 
+          elevation={3} 
+          sx={{ 
+            p: 4, 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center',
+            borderRadius: 2,
+            background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}
+        >
+          <Typography 
+            component="h1" 
+            variant="h4" 
+            sx={{ 
+              mb: 3, 
+              fontWeight: 600,
+              color: 'primary.main',
+              textAlign: 'center'
+            }}
+          >
             Admin Sign Up
           </Typography>
+
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '100%' }}>
             <TextField
               margin="normal"
@@ -96,6 +109,7 @@ export default function SignupPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
             />
             <TextField
               margin="normal"
@@ -109,6 +123,7 @@ export default function SignupPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
             />
             <TextField
               margin="normal"
@@ -122,20 +137,53 @@ export default function SignupPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={loading}
+              sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
             />
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ 
+                mt: 3, 
+                mb: 2, 
+                py: 1.5,
+                borderRadius: 2,
+                textTransform: 'none',
+                fontSize: '1rem',
+                fontWeight: 600,
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                '&:hover': {
+                  boxShadow: '0 6px 16px rgba(0, 0, 0, 0.2)',
+                },
+                '&:disabled': {
+                  boxShadow: 'none',
+                }
+              }}
               disabled={loading}
             >
-              {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign Up'}
+              {loading ? (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <CircularProgress size={20} color="inherit" />
+                  <span>Signing Up...</span>
+                </Box>
+              ) : (
+                'Sign Up'
+              )}
             </Button>
             <Box sx={{ textAlign: 'center', mt: 2 }}>
               <NextLink href="/admin/login" passHref legacyBehavior>
-                <MuiLink variant="body2">
-                  {"Already have an account? Sign In"}
+                <MuiLink 
+                  variant="body2"
+                  sx={{
+                    textDecoration: 'none',
+                    color: 'primary.main',
+                    fontWeight: 500,
+                    '&:hover': {
+                      textDecoration: 'underline',
+                    }
+                  }}
+                >
+                  Already have an account? Sign In
                 </MuiLink>
               </NextLink>
             </Box>

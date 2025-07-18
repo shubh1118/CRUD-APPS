@@ -1,13 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
 import { parseCookies, destroyCookie } from 'nookies';
-import { admin } from '../../utils/firebaseAdmin';
+import { admin } from '../../utils/firebaseAdmin'; 
 import { useRouter } from 'next/router';
-import toast from 'react-hot-toast';
+import toast from 'react-hot-toast'; 
 import NextLink from 'next/link';
-
 
 import {
   Container,
@@ -69,7 +67,13 @@ export default function AdminDashboard() {
   }, []);
 
   const handleEdit = (artworkId: string) => {
-    toast.info(`Edit functionality for artwork ID: ${artworkId} will be implemented.`);
+    // Replaced toast.info with toast() as per react-hot-toast API
+    // toast(
+    //   `Redirecting to edit artwork ID: ${artworkId}.`,
+    //   { icon: '✏️' } // Optional: add an icon for visual distinction
+    // );
+    // Redirect to the edit page for the specific artwork
+    router.push(`/admin/edit-artwork/${artworkId}`);
   };
 
   const handleDelete = async (artworkId: string) => {
@@ -86,14 +90,16 @@ export default function AdminDashboard() {
       }
 
       setArtworks(prev => prev.filter(art => art.id !== artworkId));
-      toast.success("Artwork deleted!");
+      toast.success("Artwork deleted successfully!");
     } catch (err: any) {
       toast.error(`Delete failed: ${err.message}`);
     }
   };
 
   const handleAddNew = () => {
-    toast.info("Add New functionality will be implemented.");
+    // This was already corrected in previous interactions.
+    // toast("Redirecting to add new artwork page.", { icon: '🎨' });
+    router.push("/admin/add-artwork");
   };
 
   return (
@@ -201,21 +207,25 @@ export default function AdminDashboard() {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const cookies = parseCookies(context);
-    const firebaseIdToken = cookies.__session;
+    const firebaseIdToken = cookies.__session; // Assuming '__session' is the cookie name for Firebase ID token
 
     if (!firebaseIdToken) {
+      // No token found, redirect to login page
       return {
         redirect: { destination: '/admin/login', permanent: false },
       };
     }
 
+    // Verify the Firebase ID token using Firebase Admin SDK
     const decodedToken = await admin.auth().verifyIdToken(firebaseIdToken);
-    console.log('Verified:', decodedToken.uid);
+    console.log('Admin Dashboard: Verified user UID:', decodedToken.uid);
 
+    // If token is valid, continue to page by returning props
     return { props: {} };
   } catch (error: any) {
-    console.error('Auth error:', error);
-    destroyCookie(context, '__session', { path: '/' });
+    console.error('Authentication error on admin dashboard (Firebase ID token verification failed):', error);
+    // On verification failure (e.g., token expired, invalid), destroy cookie and redirect to login
+    destroyCookie(context, '__session', { path: '/' }); // Destroy the invalid cookie
     return {
       redirect: { destination: '/admin/login', permanent: false },
     };

@@ -21,6 +21,7 @@ model Artwork {
   painting_date String
   image_url     String
   description   String?
+  ai_review     String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }

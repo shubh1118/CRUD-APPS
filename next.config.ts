@@ -1,10 +1,8 @@
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true, 
+  reactStrictMode: true,
 
   images: {
-  
     remotePatterns: [
       {
         protocol: 'https',
@@ -25,14 +23,20 @@ const nextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'https', 
+        protocol: 'https',
         hostname: 'ibb.co',
         port: '',
         pathname: '/**',
       },
-    
+      
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com', 
+        port: '',                     
+        pathname: '/**',              
+      },
     ],
   },
 };
 
-module.exports = nextConfig; 
+module.exports = nextConfig;

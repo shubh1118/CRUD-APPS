@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import {
   AppBar,
@@ -15,7 +14,7 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import toast from "react-hot-toast";
+import toast from "react-hot-toast"; 
 import { useAuth } from "../utils/AuthContext";
 
 const allNavPages = [
@@ -29,7 +28,7 @@ const allNavPages = [
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const router = useRouter();
-  const { isAuthenticated, logout, loading } = useAuth();
+  const { isAuthenticated, logout, loading } = useAuth(); 
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -51,12 +50,13 @@ function Navbar() {
         throw new Error(errorData.message || "Logout failed");
       }
 
-      toast.success("Logged out successfully!");
-      logout();
+      
+
+      logout(); 
       router.push("/");
     } catch (error: any) {
       console.error("Logout error:", error);
-      toast.error(`Logout failed: ${error.message}`);
+      toast.error(`Logout failed: ${error.message}`); 
     }
   };
 
@@ -95,7 +95,7 @@ function Navbar() {
             ART GALLERY
           </Typography>
 
-         
+          {/* Mobile Menu */}
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
@@ -160,7 +160,7 @@ function Navbar() {
             </Menu>
           </Box>
 
-          
+          {/* Desktop Logo */}
           <Typography
             variant="h5"
             noWrap
@@ -180,7 +180,7 @@ function Navbar() {
             ART GALLERY
           </Typography>
 
-         
+          {/* Desktop Navigation */}
           <Box
             sx={{
               flexGrow: 1,

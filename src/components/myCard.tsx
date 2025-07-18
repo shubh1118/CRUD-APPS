@@ -74,7 +74,7 @@ const MyMuiCard: React.FC<ArtworkProps> = ({
               borderRadius: "8px",
               fontWeight: 500,
               "&:hover": {
-                backgroundColor: "#FFCC00",
+              
                 color: "#000",
               },
             }}

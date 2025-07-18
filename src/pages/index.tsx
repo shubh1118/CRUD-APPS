@@ -84,7 +84,7 @@ export default function Home() {
 
       <Container
         maxWidth="xl"
-        sx={{ mt: { xs: 2, md: 4 }, px: { xs: 2, md: 4 } }}
+        sx={{ mt: { xs: 2, md: 4 }, px: { xs: 2, md: 4 }, pb: { xs: 4, md: 8 } }}
       >
         <Typography
           variant="h3"
