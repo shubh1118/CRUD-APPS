@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
-import { GetServerSideProps } from 'next';
-import { parseCookies, destroyCookie } from 'nookies';
-import { admin } from '../../utils/firebaseAdmin'; 
-import { useRouter } from 'next/router';
-import toast from 'react-hot-toast'; 
-import NextLink from 'next/link';
+import React, { useState, useEffect } from "react";
+import Head from "next/head";
+import { GetServerSideProps } from "next";
+import { parseCookies, destroyCookie } from "nookies";
+import { admin } from "../../utils/firebaseAdmin";
+import { useRouter } from "next/router";
+import toast from "react-hot-toast";
+import NextLink from "next/link";
 
 import {
   Container,
@@ -22,13 +22,13 @@ import {
   Box,
   CircularProgress,
   CssBaseline,
-} from '@mui/material';
+} from "@mui/material";
 
 // MUI Icons
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import HomeIcon from '@mui/icons-material/Home';
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import HomeIcon from "@mui/icons-material/Home";
 
 // Artwork type
 type Artwork = {
@@ -53,7 +53,8 @@ export default function AdminDashboard() {
       try {
         setLoading(true);
         const response = await fetch("/api/artworks");
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok)
+          throw new Error(`HTTP error! status: ${response.status}`);
         const data: Artwork[] = await response.json();
         setArtworks(data);
       } catch (err: any) {
@@ -77,11 +78,12 @@ export default function AdminDashboard() {
   };
 
   const handleDelete = async (artworkId: string) => {
-    if (!window.confirm("Are you sure you want to delete this artwork?")) return;
+    if (!window.confirm("Are you sure you want to delete this artwork?"))
+      return;
     try {
       const response = await fetch(`/api/artworks/${artworkId}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
       });
 
       if (!response.ok) {
@@ -89,7 +91,7 @@ export default function AdminDashboard() {
         throw new Error(errorData.message || `HTTP error!`);
       }
 
-      setArtworks(prev => prev.filter(art => art.id !== artworkId));
+      setArtworks((prev) => prev.filter((art) => art.id !== artworkId));
       toast.success("Artwork deleted successfully!");
     } catch (err: any) {
       toast.error(`Delete failed: ${err.message}`);
@@ -113,14 +115,39 @@ export default function AdminDashboard() {
         />
       </Head>
 
-      <Container maxWidth="lg" sx={{ mt: 0, mb: 4, fontFamily: 'Inter, sans-serif', backgroundColor: '#F5F5F7', minHeight: '100vh', pt: 4 }}>
-        <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" mb={3}>
-          <Typography variant="h4" fontWeight={600} color="#1D1D1F" sx={{ mt: 0 }}>
+      <Container
+        maxWidth="lg"
+        sx={{
+          mt: 0,
+          mb: 4,
+          fontFamily: "Inter, sans-serif",
+          backgroundColor: "#F5F5F7",
+          minHeight: "100vh",
+          pt: 4,
+        }}
+      >
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          flexWrap="wrap"
+          mb={3}
+        >
+          <Typography
+            variant="h4"
+            fontWeight={600}
+            color="#1D1D1F"
+            sx={{ mt: 0 }}
+          >
             Admin Dashboard - Artworks
           </Typography>
           <Button
             variant="contained"
-            sx={{ backgroundColor: '#007AFF', borderRadius: '10px', textTransform: 'none' }}
+            sx={{
+              backgroundColor: "#007AFF",
+              borderRadius: "10px",
+              textTransform: "none",
+            }}
             startIcon={<AddIcon />}
             onClick={handleAddNew}
           >
@@ -129,27 +156,55 @@ export default function AdminDashboard() {
         </Box>
 
         {loading ? (
-          <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '60vh' }}>
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            sx={{ height: "60vh" }}
+          >
             <CircularProgress />
-            <Typography variant="h6" ml={2}>Loading Artworks...</Typography>
+            <Typography variant="h6" ml={2}>
+              Loading Artworks...
+            </Typography>
           </Box>
         ) : error ? (
           <Box textAlign="center">
-            <Typography variant="h6" color="error">Error loading artworks</Typography>
+            <Typography variant="h6" color="error">
+              Error loading artworks
+            </Typography>
             <Typography>{error}</Typography>
-            <Button variant="contained" sx={{ mt: 2 }} onClick={() => window.location.reload()}>
+            <Button
+              variant="contained"
+              sx={{ mt: 2 }}
+              onClick={() => window.location.reload()}
+            >
               Reload
             </Button>
           </Box>
         ) : artworks.length === 0 ? (
-          <Paper sx={{ p: 3, textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderRadius: '12px' }}>
+          <Paper
+            sx={{
+              p: 3,
+              textAlign: "center",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              borderRadius: "12px",
+            }}
+          >
             <Typography variant="h6">No artworks found.</Typography>
-            <Typography variant="body2">Click “Add New Artwork” to get started.</Typography>
+            <Typography variant="body2">
+              Click “Add New Artwork” to get started.
+            </Typography>
           </Paper>
         ) : (
-          <TableContainer component={Paper} sx={{ boxShadow: '0 4px 12px rgba(0,0,0,0.08)', borderRadius: '12px' }}>
+          <TableContainer
+            component={Paper}
+            sx={{
+              boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+              borderRadius: "12px",
+            }}
+          >
             <Table sx={{ minWidth: 650 }} aria-label="artworks table">
-              <TableHead sx={{ backgroundColor: '#E5E5EA' }}>
+              <TableHead sx={{ backgroundColor: "#E5E5EA" }}>
                 <TableRow>
                   <TableCell sx={{ fontWeight: 600 }}>Title</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Artist</TableCell>
@@ -163,16 +218,28 @@ export default function AdminDashboard() {
                     key={artwork.id}
                     hover
                     sx={{
-                      transition: 'background 0.3s ease',
-                      '&:hover': { backgroundColor: '#f0f0f0' }
+                      transition: "background 0.3s ease",
+                      "&:hover": { backgroundColor: "#f0f0f0" },
                     }}
                   >
                     <TableCell>{artwork.title}</TableCell>
                     <TableCell>{artwork.artist_name}</TableCell>
-                    <TableCell>{new Date(artwork.painting_date).toLocaleDateString()}</TableCell>
                     <TableCell>
-                      <IconButton color="primary" onClick={() => handleEdit(artwork.id)}><EditIcon /></IconButton>
-                      <IconButton color="error" onClick={() => handleDelete(artwork.id)}><DeleteIcon /></IconButton>
+                      {new Date(artwork.painting_date).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleEdit(artwork.id)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        color="error"
+                        onClick={() => handleDelete(artwork.id)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -181,18 +248,18 @@ export default function AdminDashboard() {
           </TableContainer>
         )}
 
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
           <NextLink href="/" passHref legacyBehavior>
             <Button
               variant="outlined"
               color="secondary"
               startIcon={<HomeIcon />}
               sx={{
-                borderRadius: '50px',
+                borderRadius: "50px",
                 px: 3,
                 py: 1,
                 fontWeight: 500,
-                textTransform: 'none'
+                textTransform: "none",
               }}
             >
               Back to Homepage
@@ -212,22 +279,25 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (!firebaseIdToken) {
       // No token found, redirect to login page
       return {
-        redirect: { destination: '/admin/login', permanent: false },
+        redirect: { destination: "/admin/login", permanent: false },
       };
     }
 
     // Verify the Firebase ID token using Firebase Admin SDK
     const decodedToken = await admin.auth().verifyIdToken(firebaseIdToken);
-    console.log('Admin Dashboard: Verified user UID:', decodedToken.uid);
+    console.log("Admin Dashboard: Verified user UID:", decodedToken.uid);
 
     // If token is valid, continue to page by returning props
     return { props: {} };
   } catch (error: any) {
-    console.error('Authentication error on admin dashboard (Firebase ID token verification failed):', error);
+    console.error(
+      "Authentication error on admin dashboard (Firebase ID token verification failed):",
+      error
+    );
     // On verification failure (e.g., token expired, invalid), destroy cookie and redirect to login
-    destroyCookie(context, '__session', { path: '/' }); // Destroy the invalid cookie
+    destroyCookie(context, "__session", { path: "/" }); // Destroy the invalid cookie
     return {
-      redirect: { destination: '/admin/login', permanent: false },
+      redirect: { destination: "/admin/login", permanent: false },
     };
   }
 };
