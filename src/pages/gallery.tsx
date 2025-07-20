@@ -1,5 +1,5 @@
 import React from "react";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Unstable_Grid2"; // Correct import for Grid2
 import MyCard from "@/components/myCard";
 
 const artworks = [
@@ -29,18 +29,18 @@ const artworks = [
 export default function Gallery() {
   return (
     <Grid
-      container
+      container // The outer Grid is the container
       spacing={3}
       sx={{ padding: 2, maxWidth: "xl", mx: "auto", mt: 4 }}
     >
       {artworks.map((art) => (
         <Grid
-          item
+          // REMOVE THE 'item' PROP HERE
           xs={12}
           sm={6}
           md={4}
           key={art.id}
-          component="div" // 🔥 Fix for TS error
+          // component="div" // You can remove this unless specifically needed for other reasons
         >
           <MyCard {...art} id={art.id} />
         </Grid>
