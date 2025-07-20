@@ -1,4 +1,3 @@
-
 import React from "react";
 import Grid from "@mui/material/Grid";
 import MyCard from "@/components/myCard";
@@ -29,24 +28,23 @@ const artworks = [
 
 export default function Gallery() {
   return (
-
-    <>
-
-      <Grid
-        container
-        spacing={3}
-        sx={{ padding: 2, maxWidth: "xl", mx: "auto", mt: 4 }}
-      >
-        {artworks.map(
-          (
-            art
-          ) => (
-            <Grid item xs={12} sm={6} md={4} key={art.id}>
-              <MyCard {...art} id={art.id} />
-            </Grid>
-          )
-        )}
-      </Grid>
-    </>
+    <Grid
+      container
+      spacing={3}
+      sx={{ padding: 2, maxWidth: "xl", mx: "auto", mt: 4 }}
+    >
+      {artworks.map((art) => (
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={4}
+          key={art.id}
+          component="div" // 🔥 Fix for TS error
+        >
+          <MyCard {...art} id={art.id} />
+        </Grid>
+      ))}
+    </Grid>
   );
 }
