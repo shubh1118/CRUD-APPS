@@ -233,22 +233,19 @@ export default function AddArtwork() {
                 helperText={errors.artist_name}
               />
 
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label="Painting Date"
-                  value={formData.painting_date ? new Date(formData.painting_date) : null}
-                  onChange={handleDateChange}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      fullWidth
-                      required
-                      error={!!errors.painting_date}
-                      helperText={errors.painting_date}
-                    />
-                  )}
-                />
-              </LocalizationProvider>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+  <DatePicker
+    label="Painting Date"
+    value={formData.painting_date ? new Date(formData.painting_date) : null}
+    onChange={handleDateChange}
+    slotProps={{
+      textField: {
+        fullWidth: true,
+        variant: 'outlined'
+      }
+    }}
+  />
+</LocalizationProvider>
 
             
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
