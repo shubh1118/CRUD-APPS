@@ -4,12 +4,12 @@ import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 
 // Cloudinary Imports
-import { CldUploadWidget } from 'next-cloudinary';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'; // For a nice upload icon
-import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh'; // Icon for AI generation
+import { CldUploadWidget } from "next-cloudinary";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload"; // For a nice upload icon
+import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh"; // Icon for AI generation
 
 import {
   Container,
@@ -21,20 +21,20 @@ import {
   Paper,
   Stack,
   CssBaseline,
-} from '@mui/material';
+} from "@mui/material";
 
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import SaveIcon from '@mui/icons-material/Save';
-import EditNoteIcon from '@mui/icons-material/EditNote'; // Icon for "Edit"
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import SaveIcon from "@mui/icons-material/Save";
+import EditNoteIcon from "@mui/icons-material/EditNote"; // Icon for "Edit"
 
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { format, parseISO } from 'date-fns';
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { format, parseISO } from "date-fns";
 
-import { GetServerSideProps } from 'next';
-import { admin } from '../../../utils/firebaseAdmin';
-import { parseCookies, destroyCookie } from 'nookies';
+import { GetServerSideProps } from "next";
+import { admin } from "../../../utils/firebaseAdmin";
+import { parseCookies, destroyCookie } from "nookies";
 
 // IMPORTANT: Updated Artwork type to include ai_review
 type Artwork = {
@@ -66,12 +66,12 @@ export default function EditArtworkPage() {
   const router = useRouter();
   const { artworkId } = router.query;
   const [formData, setFormData] = useState<ArtworkFormData>({
-    title: '',
-    artist_name: '',
-    painting_date: '',
-    image_url: '',
-    description: '',
-    ai_review: '', // Initialize ai_review
+    title: "",
+    artist_name: "",
+    painting_date: "",
+    image_url: "",
+    description: "",
+    ai_review: "", // Initialize ai_review
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState<boolean>(true);
@@ -97,7 +97,10 @@ export default function EditArtworkPage() {
               throw new Error("Artwork not found.");
             }
             const errorData = await response.json();
-            throw new Error(errorData.message || `Failed to fetch artwork (Status: ${response.status}).`);
+            throw new Error(
+              errorData.message ||
+                `Failed to fetch artwork (Status: ${response.status}).`
+            );
           }
 
           const data: Artwork = await response.json();
@@ -106,8 +109,8 @@ export default function EditArtworkPage() {
             artist_name: data.artist_name,
             painting_date: data.painting_date,
             image_url: data.image_url,
-            description: data.description || '',
-            ai_review: data.ai_review || '', // Set ai_review from fetched data
+            description: data.description || "",
+            ai_review: data.ai_review || "", // Set ai_review from fetched data
           });
           toast.success("Artwork details loaded for editing!");
         } catch (err: any) {
@@ -128,9 +131,9 @@ export default function EditArtworkPage() {
 
   // --- Cloudinary Upload Specific Function ---
   const handleUploadSuccess = (result: any, widget: any) => {
-    if (result.event === 'success') {
+    if (result.event === "success") {
       const uploadedImageUrl = result.info.secure_url;
-      setFormData(prevData => ({
+      setFormData((prevData) => ({
         ...prevData,
         image_url: uploadedImageUrl, // Set the Cloudinary URL here
       }));
@@ -138,7 +141,7 @@ export default function EditArtworkPage() {
 
       // Clear image_url error if it was present
       if (errors.image_url) {
-        setErrors(prevErrors => ({ ...prevErrors, image_url: undefined }));
+        setErrors((prevErrors) => ({ ...prevErrors, image_url: undefined }));
       }
 
       widget.close(); // Close the widget after successful upload
@@ -154,13 +157,13 @@ export default function EditArtworkPage() {
 
     setIsGeneratingReview(true);
     setAiReviewError(null);
-    toast.loading("Generating AI review...", { id: 'aiReviewGen' });
+    toast.loading("Generating AI review...", { id: "aiReviewGen" });
 
     try {
-      const response = await fetch('/api/generate-review', {
-        method: 'POST',
+      const response = await fetch("/api/generate-review", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           imageUrl: formData.image_url,
@@ -172,23 +175,27 @@ export default function EditArtworkPage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to generate AI review');
+        throw new Error(errorData.message || "Failed to generate AI review");
       }
 
       const { review } = await response.json();
-      setFormData(prevData => ({ ...prevData, ai_review: review }));
-      toast.success("AI review generated successfully!", { id: 'aiReviewGen' });
+      setFormData((prevData) => ({ ...prevData, ai_review: review }));
+      toast.success("AI review generated successfully!", { id: "aiReviewGen" });
     } catch (error: any) {
       console.error("Error generating AI review:", error);
       setAiReviewError(error.message);
-      toast.error(`Failed to generate AI review: ${error.message}`, { id: 'aiReviewGen' });
+      toast.error(`Failed to generate AI review: ${error.message}`, {
+        id: "aiReviewGen",
+      });
     } finally {
       setIsGeneratingReview(false);
     }
   };
 
   // --- Form Field Change Handler ---
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -205,7 +212,8 @@ export default function EditArtworkPage() {
 
   // --- Date Picker Change Handler ---
   const handleDateChange = (date: Date | null) => {
-    const formattedDate = date && !isNaN(date.getTime()) ? format(date, 'yyyy-MM-dd') : '';
+    const formattedDate =
+      date && !isNaN(date.getTime()) ? format(date, "yyyy-MM-dd") : "";
     setFormData((prevData) => ({
       ...prevData,
       painting_date: formattedDate,
@@ -222,15 +230,17 @@ export default function EditArtworkPage() {
   // --- Form Validation Logic ---
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
-    if (!formData.title.trim()) newErrors.title = 'Title is required';
-    if (!formData.artist_name.trim()) newErrors.artist_name = 'Artist name is required';
+    if (!formData.title.trim()) newErrors.title = "Title is required";
+    if (!formData.artist_name.trim())
+      newErrors.artist_name = "Artist name is required";
 
     if (!formData.painting_date.trim()) {
-      newErrors.painting_date = 'Painting date is required';
+      newErrors.painting_date = "Painting date is required";
     }
 
     // Validation for image_url is simplified now as Cloudinary provides valid URLs
-    if (!formData.image_url.trim()) newErrors.image_url = 'Image URL is required (please upload an image)';
+    if (!formData.image_url.trim())
+      newErrors.image_url = "Image URL is required (please upload an image)";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -246,42 +256,48 @@ export default function EditArtworkPage() {
     }
 
     if (!artworkId || typeof artworkId !== "string") {
-        toast.error("Artwork ID is missing for the update operation.");
-        return;
+      toast.error("Artwork ID is missing for the update operation.");
+      return;
     }
 
     setIsSaving(true);
     try {
       const response = await fetch(`/api/artworks/${artworkId}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData), 
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update artwork');
+        throw new Error(errorData.message || "Failed to update artwork");
       }
 
-      toast.success('Artwork updated successfully!');
-      router.push('/admin');
+      toast.success("Artwork updated successfully!");
+      router.push("/admin");
     } catch (err: any) {
-      console.error('Error updating artwork:', err);
+      console.error("Error updating artwork:", err);
       toast.error(`Error updating artwork: ${err.message}`);
     } finally {
       setIsSaving(false);
     }
   };
 
- 
   if (loading) {
     return (
       <Container sx={{ mt: 8 }}>
-        <Box display="flex" justifyContent="center" alignItems="center" height="60vh">
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="60vh"
+        >
           <CircularProgress />
-          <Typography variant="h6" ml={2}>Loading artwork details...</Typography>
+          <Typography variant="h6" ml={2}>
+            Loading artwork details...
+          </Typography>
         </Box>
       </Container>
     );
@@ -289,10 +305,20 @@ export default function EditArtworkPage() {
 
   if (fetchError) {
     return (
-      <Container maxWidth="sm" sx={{ mt: 8, mb: 6, fontFamily: "Inter, sans-serif" }}>
-        <Paper elevation={3} sx={{ p: 4, borderRadius: 3, textAlign: "center" }}>
-          <Typography variant="h5" color="error" gutterBottom>Error</Typography>
-          <Typography variant="body1" gutterBottom>{fetchError}</Typography>
+      <Container
+        maxWidth="sm"
+        sx={{ mt: 8, mb: 6, fontFamily: "Inter, sans-serif" }}
+      >
+        <Paper
+          elevation={3}
+          sx={{ p: 4, borderRadius: 3, textAlign: "center" }}
+        >
+          <Typography variant="h5" color="error" gutterBottom>
+            Error
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            {fetchError}
+          </Typography>
           <Button
             variant="outlined"
             onClick={() => router.push("/admin")}
@@ -324,7 +350,7 @@ export default function EditArtworkPage() {
           fontFamily: "Inter, sans-serif",
           backgroundColor: "#F5F5F7",
           borderRadius: 2,
-          py: 4
+          py: 4,
         }}
       >
         <Box display="flex" alignItems="center" mb={3}>
@@ -369,80 +395,105 @@ export default function EditArtworkPage() {
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
                   label="Painting Date"
-                  value={formData.painting_date ? parseISO(formData.painting_date) : null}
+                  value={
+                    formData.painting_date
+                      ? parseISO(formData.painting_date)
+                      : null
+                  }
                   onChange={handleDateChange}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      fullWidth
-                      required
-                      error={!!errors.painting_date}
-                      helperText={errors.painting_date}
-                    />
-                  )}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      required: true,
+                      error: !!errors.painting_date,
+                      helperText: errors.painting_date,
+                    },
+                  }}
                 />
               </LocalizationProvider>
 
-           
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  <Typography variant="h6" sx={{ mt: 1 }}>Artwork Image</Typography>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Typography variant="h6" sx={{ mt: 1 }}>
+                  Artwork Image
+                </Typography>
 
-                  <CldUploadWidget
-                      uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string}
-                      onSuccess={handleUploadSuccess}
-                      options={{
-                          cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME, // Explicitly pass cloudName
-                          sources: ['local', 'url', 'camera'],
-                          multiple: false,
-                          folder: 'artwork_images',
-                          maxFileSize: 10485760, // 10MB limit
-                          clientAllowedFormats: ["png", "gif", "jpeg", "jpg", "webp", "svg"],
+                <CldUploadWidget
+                  uploadPreset={
+                    process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string
+                  }
+                  onSuccess={handleUploadSuccess}
+                  options={{
+                    cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME, // Explicitly pass cloudName
+                    sources: ["local", "url", "camera"],
+                    multiple: false,
+                    folder: "artwork_images",
+                    maxFileSize: 10485760, // 10MB limit
+                    clientAllowedFormats: [
+                      "png",
+                      "gif",
+                      "jpeg",
+                      "jpg",
+                      "webp",
+                      "svg",
+                    ],
+                  }}
+                >
+                  {({ open }) => {
+                    return (
+                      <Button
+                        variant="contained"
+                        onClick={() => open()}
+                        startIcon={<CloudUploadIcon />}
+                        color={!!errors.image_url ? "error" : "primary"}
+                      >
+                        {formData.image_url ? "Change Image" : "Upload Image"}
+                      </Button>
+                    );
+                  }}
+                </CldUploadWidget>
+
+                {!!errors.image_url && (
+                  <Typography color="error" variant="body2">
+                    {errors.image_url}
+                  </Typography>
+                )}
+
+                {/* Display uploaded image preview */}
+                {formData.image_url ? (
+                  <Box sx={{ mt: 2, textAlign: "center" }}>
+                    <Typography variant="subtitle1" gutterBottom>
+                      Current Image Preview:
+                    </Typography>
+                    <img
+                      src={formData.image_url}
+                      alt="Artwork Preview"
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "200px",
+                        objectFit: "contain",
+                        border: "1px solid #ddd",
+                        borderRadius: "8px",
                       }}
+                    />
+                    <Typography
+                      variant="caption"
+                      display="block"
+                      color="textSecondary"
+                      sx={{ mt: 1, wordBreak: "break-all" }}
+                    >
+                      URL: {formData.image_url}
+                    </Typography>
+                  </Box>
+                ) : (
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    sx={{ mt: 1 }}
                   >
-                      {({ open }) => {
-                          return (
-                              <Button
-                                  variant="contained"
-                                  onClick={() => open()}
-                                  startIcon={<CloudUploadIcon />}
-                                  color={!!errors.image_url ? 'error' : 'primary'}
-                              >
-                                  {formData.image_url ? "Change Image" : "Upload Image"}
-                              </Button>
-                          );
-                      }}
-                  </CldUploadWidget>
-
-                  {!!errors.image_url && (
-                      <Typography color="error" variant="body2">
-                          {errors.image_url}
-                      </Typography>
-                  )}
-
-                  {/* Display uploaded image preview */}
-                  {formData.image_url ? (
-                      <Box sx={{ mt: 2, textAlign: 'center' }}>
-                          <Typography variant="subtitle1" gutterBottom>Current Image Preview:</Typography>
-                          <img
-                              src={formData.image_url}
-                              alt="Artwork Preview"
-                              style={{
-                                  maxWidth: '100%',
-                                  maxHeight: '200px',
-                                  objectFit: 'contain',
-                                  border: '1px solid #ddd',
-                                  borderRadius: '8px'
-                              }}
-                          />
-                          <Typography variant="caption" display="block" color="textSecondary" sx={{ mt: 1, wordBreak: 'break-all' }}>
-                              URL: {formData.image_url}
-                          </Typography>
-                      </Box>
-                  ) : (
-                      <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                          No image uploaded yet. Please click "Upload Image" to add one.
-                      </Typography>
-                  )}
+                    No image uploaded yet. Please click "Upload Image" to add
+                    one.
+                  </Typography>
+                )}
               </Box>
               {/* End Cloudinary Upload Widget Section */}
 
@@ -457,34 +508,42 @@ export default function EditArtworkPage() {
               />
 
               {/* AI Review Section */}
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  <Typography variant="h6" sx={{ mt: 1 }}>AI Review</Typography>
-                  <TextField
-                      label="AI Generated Review"
-                      name="ai_review"
-                      value={formData.ai_review}
-                      fullWidth
-                      multiline
-                      rows={4}
-                      InputProps={{
-                          readOnly: true, // Make this field read-only
-                      }}
-                      helperText="Click 'Generate AI Review' to get a critique of the artwork image."
-                  />
-                  <Button
-                      variant="outlined"
-                      onClick={handleGenerateAIReview}
-                      disabled={!formData.image_url || isGeneratingReview} // Disable if no image or already generating
-                      startIcon={isGeneratingReview ? <CircularProgress size={20} color="inherit" /> : <AutoFixHighIcon />}
-                      sx={{ textTransform: 'none' }}
-                  >
-                      {isGeneratingReview ? "Generating..." : "Generate AI Review"}
-                  </Button>
-                  {aiReviewError && (
-                      <Typography color="error" variant="body2">
-                          {aiReviewError}
-                      </Typography>
-                  )}
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Typography variant="h6" sx={{ mt: 1 }}>
+                  AI Review
+                </Typography>
+                <TextField
+                  label="AI Generated Review"
+                  name="ai_review"
+                  value={formData.ai_review}
+                  fullWidth
+                  multiline
+                  rows={4}
+                  InputProps={{
+                    readOnly: true, // Make this field read-only
+                  }}
+                  helperText="Click 'Generate AI Review' to get a critique of the artwork image."
+                />
+                <Button
+                  variant="outlined"
+                  onClick={handleGenerateAIReview}
+                  disabled={!formData.image_url || isGeneratingReview} // Disable if no image or already generating
+                  startIcon={
+                    isGeneratingReview ? (
+                      <CircularProgress size={20} color="inherit" />
+                    ) : (
+                      <AutoFixHighIcon />
+                    )
+                  }
+                  sx={{ textTransform: "none" }}
+                >
+                  {isGeneratingReview ? "Generating..." : "Generate AI Review"}
+                </Button>
+                {aiReviewError && (
+                  <Typography color="error" variant="body2">
+                    {aiReviewError}
+                  </Typography>
+                )}
               </Box>
               {/* End AI Review Section */}
 
@@ -549,7 +608,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const firebaseIdToken = cookies.__session;
 
     if (!firebaseIdToken) {
-      console.log('Edit Artwork: No Firebase ID token found, redirecting to login.');
+      console.log(
+        "Edit Artwork: No Firebase ID token found, redirecting to login."
+      );
       return {
         redirect: { destination: "/admin/login", permanent: false },
       };
@@ -559,7 +620,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     return { props: {} };
   } catch (error: any) {
-    console.error('Authentication error on edit artwork page (Firebase ID token verification failed):', error);
+    console.error(
+      "Authentication error on edit artwork page (Firebase ID token verification failed):",
+      error
+    );
     destroyCookie(context, "__session", { path: "/" });
     return {
       redirect: { destination: "/admin/login", permanent: false },
