@@ -16,14 +16,6 @@ const eslintConfig = [
     ignores: ["src/generated/"],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
-  {
-    files: ["src/components/Navbar.tsx"],
-    rules: {
-      // Temporarily allows the use of 'any' in Navbar.tsx to pass the build.
-      // You should aim to fix this with a proper type later.
-      "@typescript-eslint/no-explicit-any": "off",
-    },
-  },
 ];
 
 export default eslintConfig;

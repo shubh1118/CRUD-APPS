@@ -1,3 +1,4 @@
+// src/components/Navbar.tsx
 import * as React from "react";
 import {
   AppBar,
@@ -14,7 +15,7 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import toast from "react-hot-toast"; 
+import toast from "react-hot-toast";
 import { useAuth } from "../utils/AuthContext";
 
 const allNavPages = [
@@ -26,9 +27,11 @@ const allNavPages = [
 ];
 
 function Navbar() {
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
+    null
+  );
   const router = useRouter();
-  const { isAuthenticated, logout, loading } = useAuth(); 
+  const { isAuthenticated, logout, loading } = useAuth();
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -50,13 +53,15 @@ function Navbar() {
         throw new Error(errorData.message || "Logout failed");
       }
 
-      
-
-      logout(); 
+      logout();
       router.push("/");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Logout error:", error);
-      toast.error(`Logout failed: ${error.message}`); 
+      if (error instanceof Error) {
+        toast.error(`Logout failed: ${error.message}`);
+      } else {
+        toast.error("An unknown error occurred during logout.");
+      }
     }
   };
 
