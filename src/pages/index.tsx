@@ -3,7 +3,6 @@ import Head from "next/head";
 import NextLink from "next/link";
 import {
   Container,
-  Grid,
   Button,
   Box,
   Typography,
@@ -15,7 +14,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 
-import MyCard from "@/components/myCard"; 
+import MyCard from "@/components/myCard";
 import { useRouter } from "next/router";
 
 type Artwork = {
@@ -84,7 +83,11 @@ export default function Home() {
 
       <Container
         maxWidth="xl"
-        sx={{ mt: { xs: 2, md: 4 }, px: { xs: 2, md: 4 }, pb: { xs: 4, md: 8 } }}
+        sx={{
+          mt: { xs: 2, md: 4 },
+          px: { xs: 2, md: 4 },
+          pb: { xs: 4, md: 8 },
+        }}
       >
         <Typography
           variant="h3"
@@ -145,13 +148,21 @@ export default function Home() {
           </FormControl>
         </Box>
 
-        
-        {loading ? ( // <-- Add parenthesis around the JSX block for the true case
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
+        {loading ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "200px",
+            }}
+          >
             <CircularProgress size={60} />
-            <Typography variant="h6" sx={{ ml: 2 }}>Loading artworks...</Typography>
+            <Typography variant="h6" sx={{ ml: 2 }}>
+              Loading artworks...
+            </Typography>
           </Box>
-        ) : error ? ( // <-- Now this ')' correctly closes the previous block, and '?' starts the next condition
+        ) : error ? (
           <Typography
             variant="h6"
             color="error"
@@ -170,15 +181,29 @@ export default function Home() {
               : "No artworks available. Add some from the Admin panel!"}
           </Typography>
         ) : (
-          <Grid container spacing={3} justifyContent="center">
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 3,
+              justifyContent: "center",
+              px: 2,
+            }}
+          >
             {filteredArtworks.map((art) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={art.id} sx={{ display: 'flex' }}>
+              <Box
+                key={art.id}
+                sx={{
+                  flex: "1 1 300px",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
                 <MyCard {...art} id={art.id} />
-              </Grid>
+              </Box>
             ))}
-          </Grid>
+          </Box>
         )}
-        
       </Container>
     </>
   );

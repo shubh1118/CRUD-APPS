@@ -1,15 +1,9 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Box,
-} from "@mui/material";
+import { Card, CardContent, Typography, Button, Box } from "@mui/material";
 
-type ArtworkProps = {
+export type ArtworkProps = {
   id: string;
   image_url: string;
   title: string;
@@ -17,7 +11,7 @@ type ArtworkProps = {
   painting_date: string;
 };
 
-const MyMuiCard: React.FC<ArtworkProps> = ({
+const MyCard: React.FC<ArtworkProps> = ({
   id,
   image_url,
   title,
@@ -27,7 +21,7 @@ const MyMuiCard: React.FC<ArtworkProps> = ({
   return (
     <Card
       sx={{
-        width: 300,
+        width: { xs: "100%", sm: 300 }, // full width on small screens, 300px on larger
         borderRadius: "12px",
         overflow: "hidden",
         backgroundColor: "#fff",
@@ -36,10 +30,10 @@ const MyMuiCard: React.FC<ArtworkProps> = ({
         flexDirection: "column",
         justifyContent: "space-between",
         fontFamily: "Inter, sans-serif",
+        mx: "auto", // center card horizontally on small screens
       }}
     >
-     
-      <Box sx={{ position: "relative", height: 180 }}>
+      <Box sx={{ position: "relative", height: 180, width: "100%" }}>
         <Image
           src={image_url}
           alt={title}
@@ -48,7 +42,6 @@ const MyMuiCard: React.FC<ArtworkProps> = ({
         />
       </Box>
 
-     
       <CardContent sx={{ px: 2, pt: 2 }}>
         <Typography variant="h6" fontWeight={600} color="#1D1D1F">
           {title}
@@ -61,30 +54,28 @@ const MyMuiCard: React.FC<ArtworkProps> = ({
         </Typography>
       </CardContent>
 
-    
       <Box sx={{ textAlign: "center", pb: 2, pt: 1 }}>
         <Link href={`/art/${id}`} passHref legacyBehavior>
-          <Button
-            variant="outlined"
-            sx={{
-              textTransform: "none",
-              fontSize: "0.875rem", 
-              px: 3,
-              py: 1,
-              borderRadius: "8px",
-              fontWeight: 500,
-              "&:hover": {
-              
-                color: "#000",
-              },
-            }}
-          >
-            View Details
-          </Button>
+          <a>
+            <Button
+              variant="outlined"
+              sx={{
+                textTransform: "none",
+                fontSize: "0.875rem",
+                px: 3,
+                py: 1,
+                borderRadius: "8px",
+                fontWeight: 500,
+                "&:hover": { color: "#000" },
+              }}
+            >
+              View Details
+            </Button>
+          </a>
         </Link>
       </Box>
     </Card>
   );
 };
 
-export default MyMuiCard;
+export default MyCard;

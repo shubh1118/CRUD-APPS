@@ -1,8 +1,8 @@
 import React from "react";
-import Grid from "@mui/material/Grid";
-import MyCard from "@/components/myCard";
+import MyCard, { ArtworkProps } from "../components/myCard";
+import { Box } from "@mui/material";
 
-const artworks = [
+const artworks: ArtworkProps[] = [
   {
     id: "gal1",
     image_url: "https://source.unsplash.com/random/400x300?sig=10",
@@ -28,23 +28,21 @@ const artworks = [
 
 export default function Gallery() {
   return (
-    <Grid
-      container 
-      spacing={3}
-      sx={{ padding: 2, maxWidth: "xl", mx: "auto", mt: 4 }}
+    <Box
+      sx={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 3,
+        justifyContent: "center",
+        px: 2,
+        mt: 4,
+        maxWidth: "xl",
+        mx: "auto",
+      }}
     >
       {artworks.map((art) => (
-        <Grid
-          
-          xs={12}
-          sm={6}
-          md={4}
-          key={art.id}
-          
-        >
-          <MyCard {...art} id={art.id} />
-        </Grid>
+        <MyCard key={art.id} {...art} />
       ))}
-    </Grid>
+    </Box>
   );
 }
