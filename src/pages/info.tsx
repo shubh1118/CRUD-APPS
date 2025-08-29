@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
-import styles from "./Styles/info.module.css";
+import styles from "../Styles/info.module.css";
 
 export async function getStaticProps() {
   const buildDate = new Date().toLocaleDateString("en-IN", {

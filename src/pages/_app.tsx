@@ -1,6 +1,6 @@
 import type { AppProps } from "next/app";
 import { Toaster } from "react-hot-toast";
-import "../styles/globals.css";
+import "../Styles/globals.css";
 import Navbar from "../components/Navbar";
 import { AuthProvider } from "../utils/AuthContext";
 

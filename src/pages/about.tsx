@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
-import styles from "./Styles/about.module.css";
+import styles from "../Styles/about.module.css";
 
 export default function About() {
   return (
