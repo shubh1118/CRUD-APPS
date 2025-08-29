@@ -11,6 +11,9 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@firebase/analytics": "^0.10.18",
+    "@firebase/auth": "^1.11.0",
+    "@firebase/installations": "^0.6.19",
     "@fontsource/roboto": "^5.2.6",
     "@google-cloud/vertexai": "^1.10.0",
     "@google/generative-ai": "^0.24.1",
