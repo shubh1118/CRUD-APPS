@@ -2,7 +2,7 @@ import * as admin from "firebase-admin";
 import path from "path";
 import fs from "fs";
 
-const serviceAccountJson = process.env.NEXT_FIREBASE_SERVICE_ACCOUNT_JSON;
+const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
 
 let serviceAccount: admin.ServiceAccount;
 
