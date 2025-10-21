@@ -21,7 +21,7 @@ const MyCard: React.FC<ArtworkProps> = ({
   return (
     <Card
       sx={{
-        width: { xs: "100%", sm: 300 }, // full width on small screens, 300px on larger
+        width: { xs: "100%", sm: 300 },
         borderRadius: "12px",
         overflow: "hidden",
         backgroundColor: "#fff",
@@ -30,7 +30,7 @@ const MyCard: React.FC<ArtworkProps> = ({
         flexDirection: "column",
         justifyContent: "space-between",
         fontFamily: "Inter, sans-serif",
-        mx: "auto", // center card horizontally on small screens
+        mx: "auto",
       }}
     >
       <Box sx={{ position: "relative", height: 180, width: "100%" }}>

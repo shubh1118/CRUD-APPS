@@ -3,7 +3,7 @@ import React from "react";
 
 const theme = createTheme({
   palette: {
-    mode: "light", // or dark
+    mode: "light",
   },
 });
 

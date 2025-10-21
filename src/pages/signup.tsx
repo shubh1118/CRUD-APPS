@@ -1,5 +1,3 @@
-
-
 import * as React from "react";
 import {
   Box,
@@ -18,12 +16,10 @@ import {
 } from "@mui/material";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 
-// Optional: Dummy Icon Components
 const GoogleIcon = () => <span>🟦</span>;
 const FacebookIcon = () => <span>🟦</span>;
 const SitemarkIcon = () => <Typography variant="h6">🎨</Typography>;
 
-// Custom Card Styling
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -39,7 +35,6 @@ const Card = styled(MuiCard)(({ theme }) => ({
   },
 }));
 
-// Background Container Styling
 const SignUpContainer = styled(Stack)(({ theme }) => ({
   minHeight: "100vh",
   padding: theme.spacing(2),
@@ -48,7 +43,6 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
   background: "radial-gradient(ellipse at center, #f0f0f0, #ffffff)",
 }));
 
-// Theme Setup
 const theme = createTheme({
   palette: {
     mode: "light",

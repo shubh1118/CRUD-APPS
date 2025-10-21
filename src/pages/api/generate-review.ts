@@ -33,7 +33,9 @@ export default async function handler(
   try {
     const genAI = new GoogleGenerativeAI(GOOGLE_API_KEY as string);
 
-  const generativeModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const generativeModel = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+    });
 
     let imageBase64: string | undefined;
     let mimeType = "image/jpeg";
@@ -116,20 +118,16 @@ export default async function handler(
   } catch (error: any) {
     console.error("Error generating AI review:", error);
     if (error.status === 429) {
-      return res
-        .status(500)
-        .json({
-          message:
-            "AI review generation failed: Too many requests. Please try again later (rate limit).",
-        });
+      return res.status(500).json({
+        message:
+          "AI review generation failed: Too many requests. Please try again later (rate limit).",
+      });
     }
     if (error.status === 403) {
-      return res
-        .status(500)
-        .json({
-          message:
-            "AI review generation failed: Permission denied. Ensure your API key is valid and not tied to a project requiring billing.",
-        });
+      return res.status(500).json({
+        message:
+          "AI review generation failed: Permission denied. Ensure your API key is valid and not tied to a project requiring billing.",
+      });
     }
     return res.status(500).json({
       message: "Internal server error while generating AI review.",

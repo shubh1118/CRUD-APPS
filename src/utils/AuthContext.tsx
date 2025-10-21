@@ -1,4 +1,3 @@
-// src/utils/AuthContext.tsx
 import React, {
   createContext,
   useContext,
@@ -7,10 +6,10 @@ import React, {
   ReactNode,
 } from "react";
 import { User, onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "./firebase"; // Import your Firebase auth instance
+import { auth } from "./firebase";
 import { useRouter } from "next/router";
 import { setCookie, destroyCookie } from "nookies";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -31,40 +30,44 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
-    // Flag to prevent re-runs from StrictMode in development
-    let isMounted = true; 
+    let isMounted = true;
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (!isMounted) return; // Prevent state updates if component is unmounted
+      if (!isMounted) return;
 
       if (firebaseUser) {
         const idToken = await firebaseUser.getIdToken();
-        console.log('AuthContext: User logged in, ID Token obtained. UID:', firebaseUser.uid);
-        console.log('AuthContext: Setting __session cookie.');
+        console.log(
+          "AuthContext: User logged in, ID Token obtained. UID:",
+          firebaseUser.uid
+        );
+        console.log("AuthContext: Setting __session cookie.");
 
-        setCookie(null, '__session', idToken, {
+        setCookie(null, "__session", idToken, {
           maxAge: 30 * 24 * 60 * 60,
-          path: '/',
-          secure: process.env.NODE_ENV === 'production',
-          httpOnly: false, // Ensure this is false
-          sameSite: 'Lax',
+          path: "/",
+          secure: process.env.NODE_ENV === "production",
+          httpOnly: false,
+          sameSite: "Lax",
         });
 
         setCurrentUser(firebaseUser);
-        setLoading(false); // Set loading to false once initial auth state is determined
+        setLoading(false);
       } else {
-        console.log('AuthContext: No user logged in. Destroying __session cookie.');
-        destroyCookie(null, '__session', { path: '/' });
+        console.log(
+          "AuthContext: No user logged in. Destroying __session cookie."
+        );
+        destroyCookie(null, "__session", { path: "/" });
         setCurrentUser(null);
-        setLoading(false); // Set loading to false once initial auth state is determined
+        setLoading(false);
       }
     });
 
     return () => {
-      isMounted = false; // Cleanup: component is unmounted
-      unsubscribe(); // Unsubscribe from auth state changes
+      isMounted = false;
+      unsubscribe();
     };
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
   const logout = async () => {
     try {
@@ -73,14 +76,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       router.push("/");
     } catch (error: any) {
       console.error("Firebase logout error:", error);
-      toast.error(`Failed to log out: ${error.message || 'Unknown error'}`);
+      toast.error(`Failed to log out: ${error.message || "Unknown error"}`);
     }
   };
 
   const isAuthenticated = !!currentUser;
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user: currentUser, loading, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, user: currentUser, loading, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

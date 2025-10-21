@@ -1,4 +1,3 @@
-// src/components/Navbar.tsx
 import * as React from "react";
 import {
   AppBar,
@@ -100,7 +99,6 @@ function Navbar() {
             ART GALLERY
           </Typography>
 
-          {/* Mobile Menu */}
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
@@ -165,7 +163,6 @@ function Navbar() {
             </Menu>
           </Box>
 
-          {/* Desktop Logo */}
           <Typography
             variant="h5"
             noWrap
@@ -185,7 +182,6 @@ function Navbar() {
             ART GALLERY
           </Typography>
 
-          {/* Desktop Navigation */}
           <Box
             sx={{
               flexGrow: 1,

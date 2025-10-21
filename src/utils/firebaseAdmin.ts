@@ -1,15 +1,12 @@
-// src/utils/firebaseAdmin.ts
 import * as admin from "firebase-admin";
 import path from "path";
 import fs from "fs";
 
-// Check for the environment variable with the full JSON content (for Vercel)
 const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
 
 let serviceAccount: admin.ServiceAccount;
 
 if (serviceAccountJson) {
-  // If the full JSON is available (Vercel), parse it directly
   try {
     serviceAccount = JSON.parse(serviceAccountJson);
     console.log(
@@ -25,7 +22,6 @@ if (serviceAccountJson) {
     );
   }
 } else {
-  // If not (local), load from the file path
   const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
   if (!serviceAccountPath) {
     console.error(
@@ -55,7 +51,6 @@ if (serviceAccountJson) {
   }
 }
 
-// Initialize Firebase Admin SDK only if it hasn't been initialized yet
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -67,7 +62,6 @@ if (!admin.apps.length) {
   );
 }
 
-// Export the Firestore and Auth instances
 const db = admin.firestore();
 const auth = admin.auth();
 
